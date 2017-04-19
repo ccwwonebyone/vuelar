@@ -1,0 +1,37 @@
+{
+  "name": "gitlar",
+  "description": "网站前端",
+  "keywords": [
+    "css",
+    "js",
+    "less",
+    "mobile-first",
+    "responsive",
+    "front-end",
+    "framework",
+    "web"
+  ],
+  "homepage": "http://getbootstrap.com",
+  "license": "MIT",
+  "moduleType": "globals",
+  "main": [
+    "less/bootstrap.less",
+    "dist/js/bootstrap.js"
+  ],
+  "ignore": [
+    "/.*",
+    "_config.yml",
+    "CNAME",
+    "composer.json",
+    "CONTRIBUTING.md",
+    "docs",
+    "js/tests",
+    "test-infra"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.3.4",
+    "vue": "~2.2.6",
+    "jqueryui": "~1.12.1",
+    "animate.css": "^3.5.2"
+  }
+}
