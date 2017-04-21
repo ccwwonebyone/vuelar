@@ -77,6 +77,7 @@ var info = {
                     introduce:''
                     },                //已选数据库
         selectTable:'',                                   //已选数据表
+        showTableOptions:{limit:25,total:0,tableInfo:[],indexs:[]},
         tables:[{name:''}],          //显示数据表
         columns:[{field:'id',name:'ID',hidden:true},  //表格字段
                  {field:'Field',name:'字段'},
@@ -359,7 +360,22 @@ var app = new Vue({
 });
 console.log({{$id}});
 getDbInfo("{{$id}}",app);
-
+//监听滚动条
+window.onscroll=function(){
+    //滚动条位置
+    var t = document.documentElement.scrollTop || document.body.scrollTop;
+    var sh = document.documentElement.scrollHeight || document.body.scrollHeight;
+    //窗口大小
+    var h = window.innerHeight;
+    if(h/(sh-t) > 0.8){
+      console.log('yes');
+      var tempData = [];
+      app.showTableOptions.indexs.push(app.showTableOptions.indexs[app.showTableOptions.indexs.length-1]+1);
+      app.data.push(app.tables[app.showTableOptions.indexs[app.showTableOptions.indexs.length-1]]);
+      console.log(app.data);
+    }
+    console.log(t,sh,(sh-t),h,h/(sh-t));
+}
 function getDbInfo(id,vueEl) {
 	$.ajax({
 	  //laravel要求
@@ -373,9 +389,30 @@ function getDbInfo(id,vueEl) {
 	  success:function(data){
 	    vueEl.tables = data.tables;
 	    vueEl.databases = data.databases;
-	    vueEl.data = data.tables;
+	    //vueEl.data = [];
 
-        vueEl.selectDatabase={};
+      for (var i = 0 ; i < vueEl.data.length; i++) {
+        vueEl.showTableOptions.tableInfo[i] = vueEl.data[i].data.length;
+
+      }
+
+      for (var i = 0 ; i < vueEl.showTableOptions.tableInfo.length; i++) {
+        vueEl.showTableOptions.total = vueEl.showTableOptions.total + vueEl.showTableOptions.tableInfo[0];
+        vueEl.showTableOptions.indexs.push(i);
+        console.log(vueEl.showTableOptions.total,vueEl.showTableOptions.limit);
+        if(vueEl.showTableOptions.total > vueEl.showTableOptions.limit){
+          break;
+        }
+
+      }
+      var tempData = [];
+      for (var indexs in vueEl.showTableOptions.indexs) {
+        tempData.push(data.tables[indexs])
+      }
+
+      vueEl.data = tempData;
+      console.log(vueEl.data);
+      vueEl.selectDatabase={};
 	    for (var i = data.databases.length - 1; i >= 0; i--) {
 	      if(data.databases[i].show == true){
             vueEl.selectDatabase = data.databases[i];
@@ -448,7 +485,7 @@ function getDbInfo(id,vueEl) {
       </a>
 </div>
 <!-- 右侧内容 -->
-  <div class="col-lg-9 no-padding right-content">
+  <div class="col-lg-9 no-padding right-content" id="rightContent">
     <div>
       <div class="page-header">
         <h1 v-on:mouseover="rightShowIt('database',selectDatabase.id)"

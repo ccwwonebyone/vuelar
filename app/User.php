@@ -30,4 +30,5 @@ class User extends Authenticatable
     protected $table = 'user';
     //设置无时间戳字段
     public $timestamps = false;
+
 }
