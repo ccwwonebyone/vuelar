@@ -11,8 +11,9 @@
 |
 */
 //web
-Route::get('/','IndexController@index')->name('index');
+Route::get('/','IndexController@index');
 Route::get('/database/{id?}','IndexController@index')->name('index');
+Route::get('login','LoginController@index')->name('login');
 //api
 	//新增数据库
 Route::post('insertDbInfo','IndexController@insertDbInfo');
@@ -30,3 +31,5 @@ Route::post('updateDatabase','IndexController@updateDatabase');
 Route::post('updateDatabaseConfig','IndexController@updateDatabaseConfig');
 	//删除数据库/表
 Route::post('del','IndexController@del');
+//验证登陆
+Route::post('checkLogin','LoginController@checkLogin');

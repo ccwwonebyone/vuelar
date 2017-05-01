@@ -124,6 +124,10 @@ var info = {
 var app = new Vue({
     el:'#app',
     data:info,
+    created:function(){
+      var user = document.getElementById('user');
+      console.log(user);
+    },
     methods:{
       submit:function(){
         $('#modalForm').submit();
