@@ -57,9 +57,10 @@ body{
 @endsection
 @section('js')
 <script type="text/javascript">
+var level = {{$level}} == 1 ? true : false;
 var info = {
         webName:'SQLAR',      //网站名
-        admin:true,         //管理员
+        admin:level,         //管理员
         databases:[{id:'',database:'',show:true,introduce:'',comment:''}],          //数据库
         selectDatabase:{                                                        //数据库
                     id:'',
@@ -195,14 +196,14 @@ var app = new Vue({
         });
       },
       showdel:function(id){
-      	this.showId = id;
+        this.showId = id;
       },
       hiddendel(){
-      	this.showId = '';
+        this.showId = '';
       },
       del(id,table,index){
         var _this = this;
-      	$.ajax({
+        $.ajax({
           headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
           type:'post',
           url:'/del',
@@ -212,7 +213,7 @@ var app = new Vue({
             id:id
           },
           success:function(data){
-          	if(data.status){
+            if(data.status){
                 if(_this.databases[index].name == _this.selectDatabase.name){
                     var i = _this.databases.length;
                     if(i == 1){
@@ -221,8 +222,8 @@ var app = new Vue({
                         getDbInfo(_this.databases[0].id,_this);
                     }
                 }
-          		_this.databases.splice(index,1);
-          	}
+                _this.databases.splice(index,1);
+            }
           }
         });
       },
@@ -365,7 +366,7 @@ var app = new Vue({
 console.log({{$id}});
 getDbInfo("{{$id}}",app);
 //监听滚动条
-window.onscroll=function(){
+/*window.onscroll=function(){
     //滚动条位置
     var t = document.documentElement.scrollTop || document.body.scrollTop;
     var sh = document.documentElement.scrollHeight || document.body.scrollHeight;
@@ -379,23 +380,23 @@ window.onscroll=function(){
       console.log(app.data);
     }
     console.log(t,sh,(sh-t),h,h/(sh-t));
-}
+}*/
 function getDbInfo(id,vueEl) {
-	$.ajax({
-	  //laravel要求
-	  headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-	  url:'/getInfo',
-	  dataType:'json',
-	  type:'post',
-	  data:{
-	    db_id:id
-	  },
-	  success:function(data){
-	    vueEl.tables = data.tables;
-	    vueEl.databases = data.databases;
-	    //vueEl.data = [];
+    $.ajax({
+      //laravel要求
+      headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+      url:'/getInfo',
+      dataType:'json',
+      type:'post',
+      data:{
+        db_id:id
+      },
+      success:function(data){
+        vueEl.tables = data.tables;
+        vueEl.databases = data.databases;
+        vueEl.data = data.tables;
 
-      for (var i = 0 ; i < vueEl.data.length; i++) {
+/*      for (var i = 0 ; i < vueEl.data.length; i++) {
         vueEl.showTableOptions.tableInfo[i] = vueEl.data[i].data.length;
 
       }
@@ -417,14 +418,14 @@ function getDbInfo(id,vueEl) {
       vueEl.data = tempData;
       console.log(vueEl.data);
       vueEl.selectDatabase={};
-	    for (var i = data.databases.length - 1; i >= 0; i--) {
-	      if(data.databases[i].show == true){
+        for (var i = data.databases.length - 1; i >= 0; i--) {
+          if(data.databases[i].show == true){
             vueEl.selectDatabase = data.databases[i];
-	        break;
-	      }
-	    }
-	  }
-	})
+            break;
+          }
+        }*/
+      }
+    })
 }
 </script>
 @endsection

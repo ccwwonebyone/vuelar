@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\DataBaseController as DataBase;
+use App\Http\Controllers\SingelRowController as SingelRow;
 use App\Database_config as DataBase_c;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -11,14 +12,21 @@ use App\Table;
 
 class IndexController extends Controller
 {
+    private $models = ['user'=>'App\User'];
     public function index($id = '')
     {
+        session_start();
+        if(!isset($_SESSION['username'])){
+            return redirect('/login');
+        }
+        $userDb = SingelRow::getInstance($this->models['user']);
+        $level = $userDb->where(['user'=>$_SESSION['username']])->value('level');
         if($id == ''){
             $DataBase_c = new DataBase_c;
             $databases = $DataBase_c->get()->toArray();
             if(!empty($databases)) $id = $databases[0]['id'];
         }
-        return view('index.index',['id'=>$id]);
+        return view('index.index',['id'=>$id,'level'=>$level]);
     }
 
     public function insertDbInfo(Request $request)
