@@ -2,17 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\DataBaseController as DataBase;
-use App\Http\Controllers\SingelRowController as SingelRow;
-use App\Database_config as DataBase_c;
+use App\Http\Controllers\SingelRowController as SingelRow;          //单列模式入口类
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
-use App\Column;
-use App\Table;
+
 
 class IndexController extends Controller
 {
-    private $models = ['user'=>'App\User'];
+    private $models = ['user'=>'App\User','Table'=>'App\Table','Column'=>'App\Column','DataBase_c'=>'App\Database_config'];
+    private $controllers = ['DataBase'=>'App\Http\Controllers\DataBaseController'];
     public function index($id = '')
     {
         session_start();
@@ -22,7 +20,7 @@ class IndexController extends Controller
         $userDb = SingelRow::getInstance($this->models['user']);
         $level = $userDb->where(['user'=>$_SESSION['username']])->value('level');
         if($id == ''){
-            $DataBase_c = new DataBase_c;
+            $DataBase_c = SingelRow::getInstance($this->models['DataBase_c']);
             $databases = $DataBase_c->get()->toArray();
             if(!empty($databases)) $id = $databases[0]['id'];
         }
@@ -54,14 +52,14 @@ class IndexController extends Controller
                 $isIconvToUtf8 = true;
                 break;
         }
-        $DataBase_c = new DataBase_c;
+        $DataBase_c = SingelRow::getInstance($this->models['DataBase_c']);
         $insertId = $DataBase_c->insertInfo($data);
 
-        $newdb = new DataBase;
+        $newdb = SingelRow::getInstance($this->controllers['DataBase']);
         $manp = $newdb->configDB($data);
         $tabs = $newdb->getTables($manp,$data['prefix']);
-        $tableDb = new Table;
-        $columnDb = new Column;
+        $tableDb = SingelRow::getInstance($this->models['Table']);
+        $columnDb = SingelRow::getInstance($this->models['Column']);
         $db_id = $insertId;
         foreach ($tabs as $value) {
             $res = $newdb->insertTable($value,$manp,$db_id,$data['prefix'],$isIconvToUtf8);
@@ -75,11 +73,11 @@ class IndexController extends Controller
     public function getInfo(Request $request)
     {
         $db_id = $request->input('db_id');
-        $tableDb = new Table;
+        $tableDb = SingelRow::getInstance($this->models['Table']);
         $tables = $tableDb->where(['db_id'=>$db_id])->get()->toArray();
-        $DataBase_c = new DataBase_c;
+        $DataBase_c = SingelRow::getInstance($this->models['DataBase_c']);
         $databases = $DataBase_c->get()->toArray();
-        $columnDb = new Column;
+        $columnDb = SingelRow::getInstance($this->models['Column']);
         foreach ($databases as &$value) {
             if($value['id'] == $db_id) $value['show']=true;
         }
@@ -104,13 +102,13 @@ class IndexController extends Controller
         $data[$field] = $value;
         switch ($table) {
             case 'database':
-                $db = new DataBase_c;
+                $db = SingelRow::getInstance($this->models['DataBase_c']);
                 break;
             case 'table':
-                $db = new Table;
+                $db = SingelRow::getInstance($this->models['Table']);
                 break;
             case 'column':
-                $db = new Column;
+                $db = SingelRow::getInstance($this->models['Column']);
                 break;
         }
         $where['id'] = $id;
@@ -126,19 +124,19 @@ class IndexController extends Controller
     public function updateTable(Request $request)
     {
         $tableId = $request->input('id');
-        $tableDb = new Table;
+        $tableDb = SingelRow::getInstance($this->models['Table']);
         $dbInfo = $tableDb->where(['id'=>$tableId])
                           ->select('db_id','name')
                           ->first()->toArray();
-        $dbc = new DataBase_c;
+        $dbc = SingelRow::getInstance($this->models['DataBase_c']);
         $dataInfo = $dbc->where(['id'=>$dbInfo['db_id']])->select('prefix','charset')->first()->toArray();
         $prefix = $dataInfo['prefix'];
         $charset = $dataInfo['charset'];
 
-        $db = new DataBase;
+        $db = SingelRow::getInstance($this->controllers['DataBase']);
         $newdb = $db->DBInId($dbInfo['db_id']);
 
-        $columnDb = new Column;
+        $columnDb = SingelRow::getInstance($this->models['Column']);
         $old_columns = $columnDb->where(['table_id'=>$tableId])->get()->toArray();
         $columns = $db->getColumns($newdb,$prefix.$dbInfo['name']);
 
@@ -185,13 +183,13 @@ class IndexController extends Controller
     public function updateDatabase(Request $request)
     {
         $id = $request->input('id');
-        $db = new DataBase;
+        $db = SingelRow::getInstance($this->controllers['DataBase']);
 
-        $dbcDb = new DataBase_c;
+        $dbcDb = SingelRow::getInstance($this->models['DataBase_c']);
         $prefix = $dbcDb->where(['id'=>$id])->value('prefix');
         $newdb = $db->DBInId($id);
         $tabs = $db->getTables($newdb,$prefix);
-        $tableDb = new Table;
+        $tableDb = SingelRow::getInstance($this->models['Table']);
         $oldTabs = $tableDb->where(['db_id'=>$id])->pluck('name','id')->toArray();
         $delTabs = array_diff($oldTabs,$tabs);
         $insertTabs = array_diff($tabs,$oldTabs);
@@ -228,7 +226,7 @@ class IndexController extends Controller
                 $data['collation'] = 'gbk_general_ci';
                 break;
         }
-        $DataBase_c = new DataBase_c;
+        $DataBase_c = SingelRow::getInstance($this->models['DataBase_c']);
         $where['id'] = $data['id'];
         unset($data['id']);
         $DataBase_c->where($where)->update($data);
@@ -240,7 +238,7 @@ class IndexController extends Controller
         $info  = $request->all();
         $table = $info['table'];
         $id    = $info['id'];
-        $db = new DataBase;
+        $db = SingelRow::getInstance($this->controllers['DataBase']);
         if($table == 'database'){
             $res = $db->delDatabase($id);
         }

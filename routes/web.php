@@ -14,7 +14,13 @@
 Route::get('/','IndexController@index');
 Route::get('/database/{id?}','IndexController@index')->name('index');
 Route::get('login','LoginController@index')->name('login');
+Route::get('install','InstallController@index')->name('install');
 //api
+Route::group(['prefix'=>'install'],function(){
+	Route::get('checkEnv','InstallController@checkEnv');
+	Route::post('start','InstallController@start');
+	Route::get('getInstallDatabases','InstallController@getInstallDatabases');
+});
 	//新增数据库
 Route::post('insertDbInfo','IndexController@insertDbInfo');
 	//获取基本信息

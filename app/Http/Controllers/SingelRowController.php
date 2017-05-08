@@ -11,10 +11,24 @@ class SingelRowController extends Controller
     //静态方法，单例统一访问入口
     public static function getInstance($name)
     {
-        $class = static::$class;
-        if(!in_array($name,array_keys($class))){
-            $class[$name] = new $name;
+        /*$memcache = new \Memcache;
+        $memcache->connect('loaclhost',11211);*/
+        if(isset(static::$class[$name])){
+            error_log('已生成类'.$name."\r\n",3,'./log.log');
+        }else{
+            static::$class[$name] = new $name;
+            error_log('已存在类'.implode(',',array_keys(static::$class))."\r\n",3,'./log.log');
+            error_log('新生成类'.$name."\r\n",3,'./log.log');
         }
-        return $class[$name];
+        return static::$class[$name];
+
+       /* if($memcache->get($name) === false){
+            $memcache->set($name, new $name);
+            error_log('已存在类'.implode(',',array_keys(static::$class))."\r\n",3,'./log.log');
+            error_log('新生成类'.$name."\r\n",3,'./log.log');
+        }else{
+            error_log('已生成类'.$name."\r\n",3,'./log.log');
+        }
+        return $memcache->get($name);*/
     }
 }

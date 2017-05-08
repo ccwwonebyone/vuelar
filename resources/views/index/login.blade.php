@@ -63,7 +63,6 @@ var app = new Vue({
   				<span class="input-group-addon">用户</span>
   				<input v-model="form.username" type="text" class="form-control" name="username">
 			</div>
-
 			<div class="input-group">
 				<span class="input-group-addon">密码</span>
 				<input v-model="form.password" class="form-control" type="password" name="password">
