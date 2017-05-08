@@ -395,7 +395,12 @@ function getDbInfo(id,vueEl) {
         vueEl.tables = data.tables;
         vueEl.databases = data.databases;
         vueEl.data = data.tables;
-
+        for (var i = 0; i < data.databases.length; i++) {
+          if(data.databases[i].show){
+            vueEl.selectDatabase = data.databases[i];
+          }
+          break;
+        }
 /*      for (var i = 0 ; i < vueEl.data.length; i++) {
         vueEl.showTableOptions.tableInfo[i] = vueEl.data[i].data.length;
 
