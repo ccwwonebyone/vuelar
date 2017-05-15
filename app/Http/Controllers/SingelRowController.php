@@ -14,11 +14,9 @@ class SingelRowController extends Controller
         /*$memcache = new \Memcache;
         $memcache->connect('loaclhost',11211);*/
         if(isset(static::$class[$name])){
-            error_log('已生成类'.$name."\r\n",3,'./log.log');
+
         }else{
             static::$class[$name] = new $name;
-            error_log('已存在类'.implode(',',array_keys(static::$class))."\r\n",3,'./log.log');
-            error_log('新生成类'.$name."\r\n",3,'./log.log');
         }
         return static::$class[$name];
 
