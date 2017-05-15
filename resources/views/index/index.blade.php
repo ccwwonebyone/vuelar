@@ -363,7 +363,6 @@ var app = new Vue({
       }
     }
 });
-console.log({{$id}},'aaa');
 getDbInfo("{{$id}}",app);
 //监听滚动条
 /*window.onscroll=function(){
