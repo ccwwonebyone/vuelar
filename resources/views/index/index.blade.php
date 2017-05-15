@@ -363,7 +363,7 @@ var app = new Vue({
       }
     }
 });
-console.log({{$id}});
+console.log({{$id}},'aaa');
 getDbInfo("{{$id}}",app);
 //监听滚动条
 /*window.onscroll=function(){
@@ -398,8 +398,8 @@ function getDbInfo(id,vueEl) {
         for (var i = 0; i < data.databases.length; i++) {
           if(data.databases[i].show){
             vueEl.selectDatabase = data.databases[i];
+            break;
           }
-          break;
         }
 /*      for (var i = 0 ; i < vueEl.data.length; i++) {
         vueEl.showTableOptions.tableInfo[i] = vueEl.data[i].data.length;

@@ -98,7 +98,7 @@ class InstallController extends Controller
             $this->createTable($databases[$databaseName],$config);
 
             $result['status'] = true;
-            $result['message'] = $databaseName.'数据库初始化成功';
+            $result['message'] = $databaseName.'数据库初始化 成功';
         } catch (Exception $e) {
             $result['status'] = false;
             $result['message'] = $databaseName.'数据库初始化失败';

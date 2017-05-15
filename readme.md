@@ -1,7 +1,5 @@
 # [vuelar](https://github.com/ccwwonebyone/vuelar/)
 
----
-
 ## 关于vuelar <small>数据库查看工具</small>
 
 **vuelar**：快速的了解数据库结构信息，通过注释，注解了解项目数据库。
