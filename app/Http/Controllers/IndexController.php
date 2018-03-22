@@ -61,12 +61,12 @@ class IndexController extends Controller
         $tableDb = SingelRow::getInstance($this->models['Table']);
         $columnDb = SingelRow::getInstance($this->models['Column']);
         $db_id = $insertId;
-        foreach ($tabs as $value) {
-            $res = $newdb->insertTable($value,$manp,$db_id,$data['prefix'],$isIconvToUtf8);
+        foreach ($tabs as $tab=>$info) {
+            $res = $newdb->insertTable($tab,$manp,$db_id,$data['prefix'],$isIconvToUtf8,$info);
         }
         return redirect()->back();
     }
-    /**
+    /** 
      * 获取页面数据
      * @return json
      */
@@ -186,19 +186,28 @@ class IndexController extends Controller
         $db = SingelRow::getInstance($this->controllers['DataBase']);
 
         $dbcDb = SingelRow::getInstance($this->models['DataBase_c']);
-        $prefix = $dbcDb->where(['id'=>$id])->value('prefix');
+        $dbInfo = $dbcDb->where(['id'=>$id])->select('prefix','charset')->first();
         $newdb = $db->DBInId($id);
-        $tabs = $db->getTables($newdb,$prefix);
+        $tabs = $db->getTables($newdb,$dbInfo['prefix']);
         $tableDb = SingelRow::getInstance($this->models['Table']);
         $oldTabs = $tableDb->where(['db_id'=>$id])->pluck('name','id')->toArray();
-        $delTabs = array_diff($oldTabs,$tabs);
-        $insertTabs = array_diff($tabs,$oldTabs);
-        $valToKeyTab = array_flip($oldTabs);
-        foreach ($delTabs as $table) {
-            $db->delTable($valToKeyTab[$table]);
+        $delTabs = array_diff_key($oldTabs,$tabs);
+        $insertTabs = array_diff_key($tabs,$oldTabs);
+        // $valToKeyTab = array_flip($oldTabs);
+        foreach ($delTabs as $tab =>$info) {
+            $db->delTable($tab);
         }
-        foreach ($insertTabs as $tab) {
-            $res = $db->insertTable($tab,$newdb,$id,$prefix);
+        $isIconvToUtf8 = false;     //是否转换编码
+        switch ($dbInfo['charset']) {
+            case 'latin1':
+                $isIconvToUtf8 = true;
+                break;
+            case 'gbk':
+                $isIconvToUtf8 = true;
+                break;
+        }
+        foreach ($insertTabs as $tab => $info) {
+            $res = $db->insertTable($tab,$newdb,$id,$dbInfo['prefix'],$isIconvToUtf8,$info);
         }
         $ret['status'] = true;
         return response()->json($ret);

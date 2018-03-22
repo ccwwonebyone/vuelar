@@ -26,7 +26,7 @@ class DataBaseController extends Controller
     	$manp = $this->configDB($config);
     	$tabs = $this->getTables($manp,$config['prefix']);
     	$tabToColumn = [];
-    	foreach ($tabs as $tab) {
+    	foreach ($tabs as $tab => $info) {
     		$columns = $this->getColumns($manp,$tab);
     		$tabToColumn[$tab] = $columns;
     	}
@@ -54,10 +54,11 @@ class DataBaseController extends Controller
      * @return array 数据表
      */
     public function getTables($laravelDbCon,$prefix){
-    	$tables = $laravelDbCon->select('show tables');
+    	$tables = $laravelDbCon->select('show table status');
     	$tabs = [];
     	foreach ($tables as $table) {
-    		$tabs[] = str_replace($prefix,'',array_values(get_object_vars($table))[0]);
+            $tableInfo = get_object_vars($table);
+    		$tabs[str_replace($prefix,'',$tableInfo['Name'])] = $tableInfo;
     	}
     	return $tabs;
     }
@@ -116,10 +117,10 @@ class DataBaseController extends Controller
         $res = $dbc->where(['id'=>$dbId])->delete();
         return $res;
     }
-    public function insertTable($tab,$laravelDbCon,$dbId,$prefix,$isIconvToUtf8 = false)
+    public function insertTable($tab,$laravelDbCon,$dbId,$prefix,$isIconvToUtf8 = false,$tableInfo)
     {
         $tableDb = new Table;
-        $tabId = $tableDb->insertGetId(['name'=>$tab,'db_id'=>$dbId]);
+        $tabId = $tableDb->insertGetId(['name'=>$tab,'comment'=>$tableInfo['Comment'],'db_id'=>$dbId]);
         $columns = $this->getColumns($laravelDbCon,$prefix.$tab);
         foreach ($columns as &$column) {
             $column['table_id'] = $tabId;
