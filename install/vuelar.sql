@@ -59,7 +59,7 @@ CREATE TABLE `vl_database_config` (
 DROP TABLE IF EXISTS `vl_table`;
 CREATE TABLE `vl_table` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(20) NOT NULL COMMENT '表名',
+  `name` varchar(40) NOT NULL COMMENT '表名',
   `comment` varchar(20) DEFAULT NULL COMMENT '表的注释',
   `introduce` text COMMENT '表介绍',
   `db_id` int(11) NOT NULL COMMENT '数据库ID',

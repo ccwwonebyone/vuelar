@@ -42,7 +42,7 @@ class DataBaseController extends Controller
      */
     public function getColumns($laravelDbCon,$table)
     {
-   		$columns = $laravelDbCon->select('show full columns from '.$table);
+   		$columns = $laravelDbCon->select('show full columns from `'.$table.'`');
         foreach ($columns as &$column) {
             $column = get_object_vars($column);
         }
