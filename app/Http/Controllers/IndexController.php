@@ -157,11 +157,11 @@ class IndexController extends Controller
         $isIconvToUtf8 = false;     //是否转换编码
         if($charset == 'latin1' || $charset == 'gbk') $isIconvToUtf8 = true;
         foreach ($columns as $column) {
-            //更新字段 不更新Comment
+            //更新字段 
             if(in_array($column['Field'],$updateColemns)){
                 $where['table_id'] = $tableId;
                 $where['Field']    = $column['Field'];
-                unset($column['Collation'],$column['Extra'],$column['Privileges'],$column['Comment']);
+                unset($column['Collation'],$column['Extra'],$column['Privileges']);
                 $columnDb->where($where)->update($column);
             }
             //新增字段
