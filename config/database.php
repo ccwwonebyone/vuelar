@@ -50,7 +50,7 @@ return [
             'charset' => 'utf8',
             'collation' => 'utf8_unicode_ci',
             'prefix' => 'vl_',
-            'strict' => true,
+            'strict' => false,
             'engine' => null,
         ],
         'change' => [
@@ -64,7 +64,7 @@ return [
             'charset' => 'utf8',
             'collation' => 'utf8_unicode_ci',
             'prefix' => '',
-            'strict' => true,
+            'strict' => false,
             'engine' => null,
         ],
         'pgsql' => [
